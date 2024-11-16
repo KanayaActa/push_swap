@@ -1,23 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: miwasa <miwasa@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/16 10:23:41 by miwasa            #+#    #+#             */
+/*   Updated: 2024/11/16 10:27:24 by miwasa           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "push_swap.h"
 
 #define MAX_SIZE 10000
-
-typedef enum e_Operations{
-	OP_SA,
-	OP_SB,
-	OP_SS,
-	OP_PA,
-	OP_PB,
-	OP_RA,
-	OP_RB,
-	OP_RR,
-	OP_RRA,
-	OP_RRB,
-	OP_RRR,
-	OP_NONE
-} t_Operation;
 
 // 操作名の文字列表現
 const char *operation_names[] = {
@@ -37,18 +35,18 @@ const char *operation_names[] = {
 
 typedef struct s_ProgramState
 {
-	t_Operation operations[MAX_SIZE * 10];
-	int op_count;
-	int stack_a[MAX_SIZE];
-	int stack_b[MAX_SIZE];
-	int size_a;
-	int size_b;
-	int sorted_unique[MAX_SIZE];
-	int sorted_unique_size;
+	t_Operation	operations[MAX_SIZE * 10];
+	int			op_count;
+	int			stack_a[MAX_SIZE];
+	int			stack_b[MAX_SIZE];
+	int			size_a;
+	int			size_b;
+	int			sorted_unique[MAX_SIZE];
+	int			sorted_unique_size;
 }	t_ProgramState;
 
-// 操作を記録する関数
-void record_operation(t_ProgramState *state, t_Operation op) {
+void record_operation(t_ProgramState *state, t_Operation op)
+{
 	if (state->op_count >= MAX_SIZE * 10) {
 		printf("Error: 操作が多すぎます。\n");
 		exit(1);
@@ -56,8 +54,8 @@ void record_operation(t_ProgramState *state, t_Operation op) {
 	state->operations[state->op_count++] = op;
 }
 
-// 操作関数の定義
-void sa(t_ProgramState *state) {
+void sa(t_ProgramState *state)
+{
 	if (state->size_a >= 2) {
 		int temp = state->stack_a[0];
 		state->stack_a[0] = state->stack_a[1];
@@ -66,7 +64,8 @@ void sa(t_ProgramState *state) {
 	}
 }
 
-void sb(t_ProgramState *state) {
+void sb(t_ProgramState *state)
+{
 	if (state->size_b >= 2) {
 		int temp = state->stack_b[0];
 		state->stack_b[0] = state->stack_b[1];
@@ -75,7 +74,8 @@ void sb(t_ProgramState *state) {
 	}
 }
 
-void ss(t_ProgramState *state) {
+void ss(t_ProgramState *state)
+{
 	sa(state);
 	sb(state);
 	if (state->op_count >= 2) {
@@ -84,7 +84,8 @@ void ss(t_ProgramState *state) {
 	}
 }
 
-void pa(t_ProgramState *state) {
+void pa(t_ProgramState *state)
+{
 	if (state->size_b > 0) {
 		for (int i = state->size_a; i > 0; i--) {
 			state->stack_a[i] = state->stack_a[i - 1];
@@ -99,7 +100,8 @@ void pa(t_ProgramState *state) {
 	}
 }
 
-void pb(t_ProgramState *state) {
+void pb(t_ProgramState *state)
+{
 	if (state->size_a > 0) {
 		for (int i = state->size_b; i > 0; i--) {
 			state->stack_b[i] = state->stack_b[i - 1];
@@ -114,7 +116,8 @@ void pb(t_ProgramState *state) {
 	}
 }
 
-void ra(t_ProgramState *state) {
+void ra(t_ProgramState *state)
+{
 	if (state->size_a >= 2) {
 		int temp = state->stack_a[0];
 		for (int i = 0; i < state->size_a - 1; i++) {
@@ -125,7 +128,8 @@ void ra(t_ProgramState *state) {
 	}
 }
 
-void rb(t_ProgramState *state) {
+void rb(t_ProgramState *state)
+{
 	if (state->size_b >= 2) {
 		int temp = state->stack_b[0];
 		for (int i = 0; i < state->size_b - 1; i++) {
@@ -136,7 +140,8 @@ void rb(t_ProgramState *state) {
 	}
 }
 
-void rr(t_ProgramState *state) {
+void rr(t_ProgramState *state)
+{
 	ra(state);
 	rb(state);
 	if (state->op_count >= 2) {
@@ -145,7 +150,8 @@ void rr(t_ProgramState *state) {
 	}
 }
 
-void rra(t_ProgramState *state) {
+void rra(t_ProgramState *state)
+{
 	if (state->size_a >= 2) {
 		int temp = state->stack_a[state->size_a - 1];
 		for (int i = state->size_a - 1; i > 0; i--) {
@@ -156,7 +162,8 @@ void rra(t_ProgramState *state) {
 	}
 }
 
-void rrb(t_ProgramState *state) {
+void rrb(t_ProgramState *state)
+{
 	if (state->size_b >= 2) {
 		int temp = state->stack_b[state->size_b - 1];
 		for (int i = state->size_b - 1; i > 0; i--) {
@@ -167,7 +174,8 @@ void rrb(t_ProgramState *state) {
 	}
 }
 
-void rrr(t_ProgramState *state) {
+void rrr(t_ProgramState *state)
+{
 	rra(state);
 	rrb(state);
 	if (state->op_count >= 2) {
@@ -180,7 +188,8 @@ int compare_int(const void *a, const void *b) {
 	return (*(int *)a) - (*(int *)b);
 }
 
-void calculate_lis(int *sequence, int size, int *lis, int *lis_size) {
+void calculate_lis(int *sequence, int size, int *lis, int *lis_size)
+{
 	int dp[MAX_SIZE];
 	int prev_arr[MAX_SIZE];
 	int max_dp = 0;
@@ -214,7 +223,8 @@ void calculate_lis(int *sequence, int size, int *lis, int *lis_size) {
 	}
 }
 
-int is_in_lis(int value, int *lis, int lis_size) {
+int is_in_lis(int value, int *lis, int lis_size)
+{
 	for (int i = 0; i < lis_size; i++) {
 		if (lis[i] == value)
 			return 1;
@@ -222,7 +232,8 @@ int is_in_lis(int value, int *lis, int lis_size) {
 	return 0;
 }
 
-int find_insert_position(t_ProgramState *state, int b_val) {
+int find_insert_position(t_ProgramState *state, int b_val)
+{
 	int position = -1;
 	for (int i = 0; i < state->size_a; i++) {
 		int a_val = state->stack_a[i];
@@ -238,7 +249,8 @@ int find_insert_position(t_ProgramState *state, int b_val) {
 	return position;
 }
 
-int calculate_total_cost(t_ProgramState *state, int b_idx, int a_idx) {
+int calculate_total_cost(t_ProgramState *state, int b_idx, int a_idx)
+{
 	int len_a = state->size_a;
 	int len_b = state->size_b;
 
@@ -253,7 +265,8 @@ int calculate_total_cost(t_ProgramState *state, int b_idx, int a_idx) {
 	}
 }
 
-void select_best_move(t_ProgramState *state, int *best_b_idx, int *best_a_idx) {
+void select_best_move(t_ProgramState *state, int *best_b_idx, int *best_a_idx)
+{
 	int min_cost = 2147483647;
 	*best_b_idx = -1;
 	*best_a_idx = -1;
@@ -269,7 +282,8 @@ void select_best_move(t_ProgramState *state, int *best_b_idx, int *best_a_idx) {
 	}
 }
 
-void execute_moves(t_ProgramState *state, int b_idx, int a_idx) {
+void execute_moves(t_ProgramState *state, int b_idx, int a_idx)
+{
 	int len_a = state->size_a;
 	int len_b = state->size_b;
 
